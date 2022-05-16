@@ -1,0 +1,105 @@
+
+body {
+  color: white;
+  height: 100vh;
+  background: linear-gradient(-45deg, #0aac1c, black, #1a69d0);
+}
+
+@-webkit-keyframes Gradient {
+  0% {
+    background-position: 0% 50%
+  }
+  50% {
+    background-position: 100% 50%
+  }
+  100% {
+    background-position: 0% 50%
+  }
+}
+
+@-moz-keyframes Gradient {
+  0% {
+    background-position: 0% 50%
+  }
+  50% {
+    background-position: 100% 50%
+  }
+  100% {
+    background-position: 0% 50%
+  }
+}
+
+@keyframes Gradient {
+  0% {
+    background-position: 0% 50%
+  }
+  50% {
+    background-position: 100% 50%
+  }
+  100% {
+    background-position: 0% 50%
+  }
+}
+
+form {
+  position: sticky;
+  top: 5px;
+  width: 300px;
+}
+
+input {
+  margin-bottom: 5px;
+  padding: 12px;
+  width: 90%;
+  border: 0px;
+  border-radius: 10px;
+}
+
+.inputbutton{
+  padding: 12px;
+  width: 30%;
+  border: 0px;
+  border-radius: 10px;
+}
+
+button {
+  padding: 10px;
+  border: 0px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+}
+
+.logout{
+  position: absolute;
+  right: 10px;
+}
+
+.rightside{
+  position: absolute;
+  left: 350px;
+}
+
+table{
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+fieldset{
+  border-color: transparent;
+}
+
+.conferenceForm{
+  position: fixed;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.1);
+  text-align: center;
+  margin-left: -10px;
+  margin-top: -10px;
+}
+
+th, td{
+  padding-inline: 10px;
+}
+
+

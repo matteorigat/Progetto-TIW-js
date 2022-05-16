@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login page</title>
+	<link rel="stylesheet" href="css/mystyle.css"/>
+</head>
+<body>
+    <center>
+		<h1>Welcome to ConferenceApp</h1>
+
+		<form action="CheckLogin" method='post'>
+			<h2>Login</h2>
+			<input type="text" placeholder="Username" name="username" required>
+			<input type="password" placeholder="Password"  name="pwd" required>
+			<button type='submit'>Login</button>
+		</form>
+		<br>
+		<form action="RegisterServlet" method='post'>
+			<h2>Registration</h2>
+			<input type="text" placeholder="Name" name="name" required>
+			<input type="text" placeholder="Surname" name="surname" required>
+			<input type="email" placeholder="Email" name="email" required>
+			<input type="text" placeholder="Username" name="username" required>
+			<input type="password" placeholder="Password" name="password"required>
+			<input type="password" placeholder="Confirm password" name="password2"required>
+			<button type='submit'>Register</button>
+		</form>
+	</center>
+</body>
+</html>
+
+

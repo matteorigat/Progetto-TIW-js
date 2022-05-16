@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Home</title>
+<link rel="stylesheet" type="text/css" media="all"
+	href="../CSS/mystyle.css" th:href="@{/css/mystyle.css}" />
+</head>
+<body>
+	<div class="logout">
+		<a th:href="@{/Logout}"><button>Logout</button></a>
+	</div>
+
+	<div class="conferenceForm">
+		<p>Complete the form to create a conference</p>
+		<form action="#" th:action="@{/CreateConference}" method="POST">
+			<fieldset>
+				<p>
+					Title: <input type="text" name="title" required />
+				</p>
+				<p>
+					Date: <input type="date" name="date" required />
+				</p>
+				<p>
+					Time: <input type="time" name="time" required />
+				</p>
+				<p>
+					Duration: <input type="time" name="duration" required/>
+				</p>
+				<p>
+					Guests: <input type="number" name="guests" min=0 required />
+				</p>
+				<input class="inputbutton" type="submit" name="Create Conference">
+			</fieldset>
+		</form>
+	</div>
+
+	<div class="rightside">
+		<h1>Welcome to the ConferenceApp Home Page</h1>
+		<h2 th:text="${'Nice to see you again ' + session.user.name + ' ' + session.user.surname}"></h2>
+		<br><br><br>
+		<p>Conferences created by you</p>
+		<table>
+			<thead>
+			<tr>
+				<th>Title</th>
+				<th>Date</th>
+				<th>Duration</th>
+				<th>Guests</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="c : ${conferences}">
+				<td th:text="${c.title}"></td>
+				<td th:text="${c.getStringDate()}"></td>
+				<td th:text="${c.getStringDuration()}"></td>
+				<td th:text="${c.guests}"></td>
+			</tr>
+			</tbody>
+		</table>
+        <br><br><br>
+		<p>Conferences where you are invited in</p>
+		<table>
+			<thead>
+			<tr>
+				<th>Title</th>
+				<th>Date</th>
+				<th>Duration</th>
+				<th>Guests</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="c : ${conferences2}">
+				<td th:text="${c.title}"></td>
+				<td th:text="${c.getStringDate()}"></td>
+				<td th:text="${c.getStringDuration()}"></td>
+				<td th:text="${c.guests}"></td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+</body>
+</html>
