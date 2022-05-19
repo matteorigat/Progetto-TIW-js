@@ -3,16 +3,19 @@
 <head>
     <title>Login page</title>
 	<link rel="stylesheet" href="css/mystyle.css"/>
+	<script src="utils.js" charset="utf-8" defer></script>
+	<script src="loginManagement.js" charset="utf-8" defer></script>
 </head>
 <body>
     <center>
-		<h1>Welcome to ConferenceApp</h1>
+		<h1>Welcome to ConferenceApp-js</h1>
 
-		<form action="CheckLogin" method='post'>
+		<form action="#">
 			<h2>Login</h2>
 			<input type="text" placeholder="Username" name="username" required>
 			<input type="password" placeholder="Password"  name="pwd" required>
-			<button type='submit'>Login</button>
+			<button id="loginbutton" type='submit'>Login</button>
+			<p id="errormessage"></p>
 		</form>
 		<br>
 		<form action="RegisterServlet" method='post'>

@@ -4,28 +4,25 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.annotation.MultipartConfig;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.projects.beans.UserBean;
 import it.polimi.tiw.projects.dao.UserDAO;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
 
 @WebServlet("/CheckLogin")
+@MultipartConfig
 public class CheckLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 
 	public CheckLogin() {
 		super();
@@ -33,12 +30,6 @@ public class CheckLogin extends HttpServlet {
 
 	public void init() throws ServletException {
 		connection = ConnectionHandler.getConnection(getServletContext());
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -46,45 +37,36 @@ public class CheckLogin extends HttpServlet {
 		// obtain and escape params
 		String usrn = null;
 		String pwd = null;
-		try {
-			usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
-			pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
-			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
-				throw new Exception("Missing or empty credential value");
-			}
-
-		} catch (Exception e) {
-			// for debugging only e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing credential value");
+		usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
+		pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
+		if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty() ) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Credentials must be not null");
 			return;
 		}
-
 		// query db to authenticate for user
 		UserDAO userDao = new UserDAO(connection);
 		UserBean user = null;
 		try {
 			user = userDao.checkCredentials(usrn, pwd);
 		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to check credentials");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println("Internal server error, retry later");
 			return;
 		}
 
 		// If the user exists, add info to the session and go to home page, otherwise
-		// show login page with error message
-
-		String path;
+		// return an error status code and message
 		if (user == null) {
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("errorMsg", "Incorrect username or password");
-			path = "/index.html";
-			templateEngine.process(path, ctx, response.getWriter());
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.getWriter().println("Incorrect credentials");
 		} else {
 			request.getSession().setAttribute("user", user);
-			path = getServletContext().getContextPath() + "/Home";
-			response.sendRedirect(path);
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().println(usrn);
 		}
-
 	}
 
 	public void destroy() {
