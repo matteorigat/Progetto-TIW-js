@@ -7,6 +7,23 @@
   document.getElementById("registerbutton").addEventListener('click', (e) => {
     var form = e.target.closest("form");
     if (form.checkValidity()) {
+      var name = document.getElementById("name").value;
+      var surname = document.getElementById("surname").value;
+      var email = document.getElementById("email").value;
+      var username = document.getElementById("username").value;
+      var password = document.getElementById("password").value;
+      var password2 = document.getElementById("password2").value;
+
+      if(name == null || surname == null || email == null || username == null || password == null || password2 == null || name == "" || surname == "" || email == "" || username == "" || password == "" || password2 == ""){
+        document.getElementById("errormessage2").textContent = "2Missing or empty credential value";
+        return;
+      }
+
+      if(password !== password2){
+        document.getElementById("errormessage2").textContent = "not same password";
+        return;
+      }
+
       makeCall("POST", 'RegisterServlet', e.target.closest("form"),
         function(x) {
           if (x.readyState == XMLHttpRequest.DONE) {
