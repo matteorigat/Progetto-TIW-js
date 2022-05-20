@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.projects.beans.Conference;
-import it.polimi.tiw.projects.dao.ConferenceDAO;
 import it.polimi.tiw.projects.dao.UserDAO;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -47,10 +46,6 @@ public class CreateConference extends HttpServlet {
 		templateResolver.setSuffix(".html");
 
 		connection = ConnectionHandler.getConnection(getServletContext());
-	}
-
-	private Date getMeYesterday() {
-		return new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -99,7 +94,7 @@ public class CreateConference extends HttpServlet {
 		request.getSession().setAttribute("conference", conference);
 
 
-		ArrayList<UserBean> users = null;
+		ArrayList<UserBean> users;
 		UserDAO userDAO = new UserDAO(connection);
 		try {
 			users = userDAO.getUsers(user.getId());
@@ -113,7 +108,7 @@ public class CreateConference extends HttpServlet {
 			return;
 		}
 
-		// Redirect to the Home page and add missions to the parameters
+		// Redirect to Anagrafica and add users to the parameters
 		String path = "/WEB-INF/Anagrafica";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());

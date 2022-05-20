@@ -1,6 +1,5 @@
 package it.polimi.tiw.projects.dao;
 
-
 import java.sql.*;
 
 public class GuestDAO {

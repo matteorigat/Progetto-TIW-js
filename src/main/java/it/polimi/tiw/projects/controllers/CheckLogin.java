@@ -35,8 +35,8 @@ public class CheckLogin extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// obtain and escape params
-		String usrn = null;
-		String pwd = null;
+		String usrn;
+		String pwd;
 		usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
 		pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
 		if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty() ) {
@@ -46,7 +46,7 @@ public class CheckLogin extends HttpServlet {
 		}
 		// query db to authenticate for user
 		UserDAO userDao = new UserDAO(connection);
-		UserBean user = null;
+		UserBean user;
 		try {
 			user = userDao.checkCredentials(usrn, pwd);
 		} catch (SQLException e) {

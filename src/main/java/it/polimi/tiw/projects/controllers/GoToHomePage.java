@@ -3,7 +3,6 @@ package it.polimi.tiw.projects.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -55,8 +54,8 @@ public class GoToHomePage extends HttpServlet {
 		}
 		UserBean user = (UserBean) session.getAttribute("user");
 		ConferenceDAO conferenceDAO = new ConferenceDAO(connection);
-		List<Conference> conferences = new ArrayList<Conference>();
-		List<Conference> conferences2 = new ArrayList<Conference>();
+		List<Conference> conferences;
+		List<Conference> conferences2;
 
 		try {
 			conferences = conferenceDAO.findConferenceByUser(user.getId());

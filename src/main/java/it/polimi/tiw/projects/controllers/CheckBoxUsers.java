@@ -92,7 +92,7 @@ public class CheckBoxUsers extends HttpServlet {
 				throw new RuntimeException(e);
 			}
 
-			// Redirect to the Home page and add missions to the parameters
+			// Redirect to the Home page
 			attempt = 0;
 			request.getSession().removeAttribute("conference");
 			String path = getServletContext().getContextPath() + "/Home";
@@ -101,7 +101,7 @@ public class CheckBoxUsers extends HttpServlet {
 		} else {
 
 			if(attempt >= 2){
-				// Redirect to the Home page and add missions to the parameters
+				// Redirect to Cancellazione
 				attempt = 0;
 				request.getSession().removeAttribute("conference");
 
@@ -131,7 +131,7 @@ public class CheckBoxUsers extends HttpServlet {
 						if(Integer.parseInt(checkBoxArray[i]) == ub.getId())
 							ub.setChecked(true);
 
-				// Redirect to the Home page and add missions to the parameters
+				// Redirect to the Anagrafica page and add users to the parameters
 				attempt++;
 				String path = "/WEB-INF/Anagrafica";
 				ServletContext servletContext = getServletContext();

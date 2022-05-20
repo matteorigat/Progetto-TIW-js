@@ -15,9 +15,11 @@ public class ConferenceDAO {
     public List<Conference> findConferenceByUser(int userId) throws SQLException {
         List<Conference> conferences = new ArrayList<Conference>();
 
-        String query = "SELECT * FROM conferences WHERE host = ? AND date >= CURRENT_TIMESTAMP ORDER BY date";
+        String query = "SELECT * FROM conferences WHERE host = ? AND date >= ? ORDER BY date";
         try (PreparedStatement pstatement = connection.prepareStatement(query);) {
             pstatement.setInt(1, userId);
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            pstatement.setTimestamp(2, now);
             try (ResultSet result = pstatement.executeQuery();) {
                 while (result.next()) {
                     Conference conference = new Conference();
@@ -37,9 +39,11 @@ public class ConferenceDAO {
     public List<Conference> findConference2ByUser(int userId) throws SQLException {
         List<Conference> conferences = new ArrayList<Conference>();
 
-        String query = "SELECT * FROM conferences WHERE id IN (SELECT idconference FROM guests WHERE idguest = ?) AND date >= CURRENT_TIMESTAMP ORDER BY date";
+        String query = "SELECT * FROM conferences WHERE id IN (SELECT idconference FROM guests WHERE idguest = ?) AND date >= ? ORDER BY date";
         try (PreparedStatement pstatement = connection.prepareStatement(query);) {
             pstatement.setInt(1, userId);
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            pstatement.setTimestamp(2, now);
             try (ResultSet result = pstatement.executeQuery();) {
                 while (result.next()) {
                     Conference conference = new Conference();
@@ -71,15 +75,6 @@ public class ConferenceDAO {
         return conferenceId;
     }
 
-    public void deleteConferenceById(int conferenceId) throws SQLException {
-        String query = "DELETE FROM conferences WHERE id = ?";
-        try (PreparedStatement pstatement = connection.prepareStatement(query);) {
-            pstatement.setInt(1, conferenceId);
-            pstatement.executeUpdate();
-        }
-    }
-
-
     public void createConference(Conference conference)
             throws SQLException {
 
@@ -93,5 +88,15 @@ public class ConferenceDAO {
             pstatement.executeUpdate();
         }
     }
+
+    /*
+     public void deleteConferenceById(int conferenceId) throws SQLException {
+        String query = "DELETE FROM conferences WHERE id = ?";
+        try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+            pstatement.setInt(1, conferenceId);
+            pstatement.executeUpdate();
+        }
+    }
+     */
 
 }

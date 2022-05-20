@@ -33,12 +33,12 @@ public class RegisterServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //Copying all the input parameters in to local variables
-        String name = null;
-        String surname = null;
-        String email = null;
-        String username = null;
-        String password = null;
-        String password2 = null;
+        String name;
+        String surname;
+        String email;
+        String username;
+        String password;
+        String password2;
 
         try {
             name = StringEscapeUtils.escapeJava(request.getParameter("name"));
@@ -89,20 +89,27 @@ public class RegisterServlet extends HttpServlet {
         userBean.setUsername(username);
         userBean.setPassword(password);
 
-        //The core Logic of the Registration application is present here. We are going to insert user data in to the database.
         String userRegistered = userDao.registerUser(userBean);
 
-        if(userRegistered.equals("SUCCESS")){   //On success, you can display a message to user on Home page
+        if(userRegistered.equals("SUCCESS")){
             request.getSession().setAttribute("user", userBean);
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().println(userRegistered);
         }
-        else   //On Failure, display a meaningful message to the User.
+        else
         {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Error in creating an account");
+        }
+    }
+
+    public void destroy() {
+        try {
+            ConnectionHandler.closeConnection(connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
