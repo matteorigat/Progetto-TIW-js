@@ -10,12 +10,15 @@ import java.util.Date;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.polimi.tiw.projects.beans.Conference;
 import it.polimi.tiw.projects.dao.UserDAO;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -28,23 +31,16 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 @WebServlet("/CreateConference")
+@MultipartConfig
 public class CreateConference extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 
 	public CreateConference() {
 		super();
 	}
 
 	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 
@@ -79,7 +75,8 @@ public class CreateConference extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (isBadRequest) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing param values");
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Incorrect or missing param values");
 			return;
 		}
 
@@ -99,21 +96,24 @@ public class CreateConference extends HttpServlet {
 		try {
 			users = userDAO.getUsers(user.getId());
 			if (users == null) {
-				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				response.getWriter().println("Resource not found");
 				return;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover users");
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().println("Not possible to recover users");
 			return;
 		}
 
-		// Redirect to Anagrafica and add users to the parameters
-		String path = "/WEB-INF/Anagrafica";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("users", users);
-		templateEngine.process(path, ctx, response.getWriter());
+		Gson gson = new GsonBuilder().create();
+		String json = gson.toJson(users);
+
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(json);
 
 	}
 

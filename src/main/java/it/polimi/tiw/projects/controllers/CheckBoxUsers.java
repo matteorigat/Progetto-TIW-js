@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.polimi.tiw.projects.beans.Conference;
 import it.polimi.tiw.projects.dao.ConferenceDAO;
 import it.polimi.tiw.projects.dao.GuestDAO;
@@ -29,7 +31,6 @@ import it.polimi.tiw.projects.utils.ConnectionHandler;
 public class CheckBoxUsers extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-	private TemplateEngine templateEngine;
 
 	private int attempt = 0;
 
@@ -38,17 +39,10 @@ public class CheckBoxUsers extends HttpServlet {
 	}
 
 	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		// If the user is not logged in (not present in session) redirect to the login
@@ -61,7 +55,8 @@ public class CheckBoxUsers extends HttpServlet {
 
 		Conference conference = (Conference) request.getSession().getAttribute("conference");
 		if (conference == null) {
-			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			response.getWriter().println("Not possible to recover conference");
 			return;
 		}
 
@@ -76,7 +71,8 @@ public class CheckBoxUsers extends HttpServlet {
 		}
 
 		if (isBadRequest || checkBoxArray.length < 1) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect or missing param values");
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().println("Incorrect or missing param values");
 			return;
 		}
 
@@ -95,8 +91,11 @@ public class CheckBoxUsers extends HttpServlet {
 			// Redirect to the Home page
 			attempt = 0;
 			request.getSession().removeAttribute("conference");
-			String path = getServletContext().getContextPath() + "/Home";
-			response.sendRedirect(path);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write("success");
 
 		} else {
 
@@ -105,10 +104,10 @@ public class CheckBoxUsers extends HttpServlet {
 				attempt = 0;
 				request.getSession().removeAttribute("conference");
 
-				String path = "/WEB-INF/Cancellazione";
-				ServletContext servletContext = getServletContext();
-				final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-				templateEngine.process(path, ctx, response.getWriter());
+				response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				response.getWriter().write("error");
 			} else {
 
 				ArrayList<UserBean> users;
@@ -117,12 +116,14 @@ public class CheckBoxUsers extends HttpServlet {
 				try {
 					users = userDAO.getUsers(user.getId());
 					if (users == null) {
-						response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
+						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+						response.getWriter().println("Resource not found");
 						return;
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
-					response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to recover users");
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.getWriter().println("Not possible to recover users");
 					return;
 				}
 
@@ -133,13 +134,14 @@ public class CheckBoxUsers extends HttpServlet {
 
 				// Redirect to the Anagrafica page and add users to the parameters
 				attempt++;
-				String path = "/WEB-INF/Anagrafica";
-				ServletContext servletContext = getServletContext();
-				final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-				ctx.setVariable("users", users);
-				ctx.setVariable("attempt", 3 - attempt);
-				ctx.setVariable("surplusGuests",checkBoxArray.length - conference.getGuests());
-				templateEngine.process(path, ctx, response.getWriter());
+
+				Gson gson = new GsonBuilder().create();
+				String json = gson.toJson(users);
+
+				response.setStatus(HttpServletResponse.SC_CONTINUE);
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				response.getWriter().write(json);
 			}
 		}
 	}
