@@ -19,10 +19,6 @@ import it.polimi.tiw.projects.beans.Conference;
 import it.polimi.tiw.projects.dao.ConferenceDAO;
 import it.polimi.tiw.projects.dao.GuestDAO;
 import it.polimi.tiw.projects.dao.UserDAO;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.projects.beans.UserBean;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
@@ -42,7 +38,7 @@ public class CheckBoxUsers extends HttpServlet {
 		connection = ConnectionHandler.getConnection(getServletContext());
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		// If the user is not logged in (not present in session) redirect to the login

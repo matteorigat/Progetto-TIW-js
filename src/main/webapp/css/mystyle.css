@@ -67,3 +67,19 @@ fieldset{
 th, td{
   padding-inline: 10px;
 }
+.modalbackground{
+  position: absolute;
+  margin-left: -10px;
+  margin-top: -10px;
+  height: 100%;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.5);
+}
+.modal{
+  position: absolute;
+  z-index: 999;
+  top: 30%;
+  left: 43%;
+  background: #1f1f1f;
+  text-align: center;
+}
