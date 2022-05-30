@@ -42,6 +42,7 @@ public class getConferences extends HttpServlet {
 			response.sendRedirect(loginpath);
 			return;
 		}
+
 		UserBean user = (UserBean) session.getAttribute("user");
 		ConferenceDAO conferenceDAO = new ConferenceDAO(connection);
 		List<Conference> conferences;

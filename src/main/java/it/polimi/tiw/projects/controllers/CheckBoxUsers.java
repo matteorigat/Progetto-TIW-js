@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import it.polimi.tiw.projects.beans.UserBean;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
 
 @WebServlet("/CheckBoxUsers")
+@MultipartConfig
 public class CheckBoxUsers extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
@@ -66,6 +68,10 @@ public class CheckBoxUsers extends HttpServlet {
 			e.printStackTrace();
 		}
 
+		for(int i = 0; i< checkBoxArray.length; i++){
+			System.out.println(checkBoxArray[i]);
+		}
+
 		if (isBadRequest || checkBoxArray.length < 1) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			response.getWriter().println("Incorrect or missing param values");
@@ -88,7 +94,7 @@ public class CheckBoxUsers extends HttpServlet {
 			attempt = 0;
 			request.getSession().removeAttribute("conference");
 
-			response.setStatus(HttpServletResponse.SC_OK);
+			response.setStatus(HttpServletResponse.SC_CREATED);
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write("success");
@@ -100,7 +106,7 @@ public class CheckBoxUsers extends HttpServlet {
 				attempt = 0;
 				request.getSession().removeAttribute("conference");
 
-				response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+				response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
 				response.setContentType("application/json");
 				response.setCharacterEncoding("UTF-8");
 				response.getWriter().write("error");

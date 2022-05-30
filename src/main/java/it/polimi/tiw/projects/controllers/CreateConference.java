@@ -25,10 +25,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 import it.polimi.tiw.projects.beans.UserBean;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 @WebServlet("/CreateConference")
 @MultipartConfig

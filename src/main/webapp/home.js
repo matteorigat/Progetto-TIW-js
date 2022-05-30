@@ -188,7 +188,7 @@
 
 
 		this.update = function(arrayUsers) {
-			var row, cell, checkbox, submit, form;
+			var row, cell, checkbox, fieldset, submit, form;
 			this.listcontainerbody.innerHTML = ""; // empty the table body
 			// build updated list
 			var self = this;
@@ -231,16 +231,15 @@
 
 			// Manage submit button
 			this.wizard.querySelector("input[type='button'].submit").addEventListener('click', (e) => {
-				var eventfieldset = e.target.closest("fieldset"),
+				let eventfieldset = e.target.closest("form"),
 					valid = true;
-				for (i = 0; i < eventfieldset.elements.length; i++) {
+				for (let i = 0; i < eventfieldset.elements.length; i++) {
 					if (!eventfieldset.elements[i].checkValidity()) {
 						eventfieldset.elements[i].reportValidity();
 						valid = false;
 						break;
 					}
 				}
-
 				if (valid) {
 					var self = this;
 					makeCall("POST", 'CreateConference', e.target.closest("form"),
@@ -248,7 +247,7 @@
 							if (req.readyState == XMLHttpRequest.DONE) {
 								var message = req.responseText; // error message or conference id
 								if (req.status == 200) {
-									orchestrator.refresh(message); // id of the new conference passed
+									orchestrator.refresh("w"); // id of the new conference passed
 								} else if (req.status == 403) {
 									window.location.href = req.getResponseHeader("Location");
 									window.sessionStorage.removeItem('username');
@@ -263,36 +262,53 @@
 				}
 			});
 		};
-
-		this.reset = function() {
-			var fieldsets = document.querySelectorAll("#" + this.wizard.id + " fieldset");
-			fieldsets[0].hidden = false;
-			fieldsets[1].hidden = true;
-			fieldsets[2].hidden = true;
-
-		}
 	}
 
-	function WizardUsers(wizardId, alert) {
+	function WizardUsers(wizardId, _listcontainer, _listcontainerbody, alert) {
 
 		this.wizard = wizardId;
 		this.alert = alert;
+
+		this.alert = _alert;
+		this.listcontainer = _listcontainer;
+		this.listcontainerbody = _listcontainerbody;
+
+		this.reset = function() {
+			this.listcontainer.style.visibility = "hidden";
+		}
 
 
 		this.registerEvents = function(orchestrator) {
 
 			// Manage submit button
 			this.wizard.querySelector("input[type='button'].submit").addEventListener('click', (e) => {
-				valid = true;
-
+				let eventfieldset = e.target.closest("form"),
+					valid = true;
+				for (let i = 0; i < eventfieldset.elements.length; i++) {
+					if (!eventfieldset.elements[i].checkValidity()) {
+						eventfieldset.elements[i].reportValidity();
+						valid = false;
+						break;
+					}
+				}
 				if (valid) {
 					var self = this;
 					makeCall("POST", 'CheckBoxUsers', e.target.closest("form"),
 						function(req) {
 							if (req.readyState == XMLHttpRequest.DONE) {
 								var message = req.responseText; // error message or conference id
-								if (req.status == 200) {
+								if (req.status == 201) { //created
 									orchestrator.refresh(message); // id of the new conference passed
+								} else if (req.status == 100) { // riprova
+									var usersToShow = JSON.parse(req.responseText);
+									if (usersToShow.length == 0) {
+										self.alert.textContent = "No conferences yet!";
+										return;
+									}
+									self.update(usersToShow); // self visible by closure
+									if (next) next(); // show the default element of the list if present
+								} else if (req.status == 205) { // troppi tentativi
+									window.location.href = "/WEB_INF/Cancellazione.html";
 								} else if (req.status == 403) {
 									window.location.href = req.getResponseHeader("Location");
 									window.sessionStorage.removeItem('username');
@@ -308,12 +324,33 @@
 			});
 		};
 
-		this.reset = function() {
-			var fieldsets = document.querySelectorAll("#" + this.wizard.id + " fieldset");
-			fieldsets[0].hidden = false;
-			fieldsets[1].hidden = true;
-			fieldsets[2].hidden = true;
+		this.update = function(arrayUsers) {
+			var row, cell, checkbox;
+			this.listcontainerbody.innerHTML = ""; // empty the table body
+			// build updated list
+			var self = this;
 
+			arrayUsers.forEach(function(user) { // self visible here, not this
+				row = document.createElement("tr");
+				cell = document.createElement("td");
+				checkbox = document.createElement("input");
+				checkbox.type = "checkbox";
+				checkbox.name = "userscheckbox";
+				checkbox.value = user.id;
+				if(user.checked)
+					checkbox.checked = true;
+				cell.appendChild(checkbox);
+				row.appendChild(cell);
+				cell = document.createElement("td");
+				cell.textContent = user.name;
+				row.appendChild(cell);
+				cell = document.createElement("td");
+				cell.textContent = user.surname;
+				row.appendChild(cell);
+				self.listcontainerbody.appendChild(row);
+			});
+
+			this.listcontainer.style.visibility = "visible";
 		}
 	}
 
@@ -345,7 +382,7 @@
 			wizard = new Wizard(document.getElementById("id_createconferenceform"), alertContainer);
 			wizard.registerEvents(this);  // the orchestrator passes itself --this-- so that the wizard can call its refresh function after creating a conference
 
-			wizardUsers = new WizardUsers(document.getElementById("id_usersform"), alertContainer);
+			wizardUsers = new WizardUsers(document.getElementById("id_usersform"), document.getElementById("id_listcontainer3"), document.getElementById("id_listcontainerbody3"), alertContainer);
 			wizardUsers.registerEvents(this);
 
 
@@ -362,7 +399,7 @@
 				conferencesList2.reset();
 				conferencesList.show(); // closure preserves visibility of this
 				conferencesList2.show();
-			} else {
+			} else if(message == "w"){
 				document.getElementById("modalbackground").style.visibility = "visible";
 				usersList.reset();
 				usersList.show();
