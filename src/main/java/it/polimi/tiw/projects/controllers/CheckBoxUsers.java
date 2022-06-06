@@ -59,17 +59,13 @@ public class CheckBoxUsers extends HttpServlet {
 		}
 
 		String[] checkBoxArray = null;
-		Boolean isBadRequest = false;
+		boolean isBadRequest = false;
 		try {
 			checkBoxArray = request.getParameterValues("userscheckbox");
 
 		} catch (NumberFormatException | NullPointerException e) {
 			isBadRequest = true;
 			e.printStackTrace();
-		}
-
-		for(int i = 0; i< checkBoxArray.length; i++){
-			System.out.println(checkBoxArray[i]);
 		}
 
 		if (isBadRequest || checkBoxArray.length < 1) {
@@ -140,7 +136,7 @@ public class CheckBoxUsers extends HttpServlet {
 				Gson gson = new GsonBuilder().create();
 				String json = gson.toJson(users);
 
-				response.setStatus(HttpServletResponse.SC_CONTINUE);
+				response.setStatus(HttpServletResponse.SC_OK);
 				response.setContentType("application/json");
 				response.setCharacterEncoding("UTF-8");
 				response.getWriter().write(json);

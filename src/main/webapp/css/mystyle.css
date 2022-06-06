@@ -47,6 +47,10 @@ button {
 
 table{
   text-align: center;
+}
+
+.conferencestable{
+  text-align: center;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
@@ -67,19 +71,33 @@ fieldset{
 th, td{
   padding-inline: 10px;
 }
+
 .modalbackground{
   position: absolute;
+  z-index: 999;
   margin-left: -10px;
   margin-top: -10px;
   height: 100%;
   width: 100%;
   background: rgba(255, 255, 255, 0.5);
+  /* pointer-events: none; */
 }
-.modal{
+
+.modalform{
+  width: 320px;
   position: absolute;
-  z-index: 999;
+  border-radius: 10px;
   top: 30%;
-  left: 43%;
+  left: 40%;
   background: #1f1f1f;
   text-align: center;
+}
+
+.cancel{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 45px;
+  border-radius: 100%;
+  zoom: 50%;
 }

@@ -6,11 +6,11 @@
 	<link rel="stylesheet" href="css/mystyle.css"/>
 	<script src="utils.js" charset="utf-8" defer></script>
 	<script src="home.js" charset="utf-8" defer></script>
-	<script src="sort.js" charset="utf-8" defer></script>
 </head>
 <body>
 <div class="modalbackground" id="modalbackground">
-	<form  class="modal" id="id_usersform" action="#">
+	<form class="modalform" id="id_usersform" action="#">
+		<input type="button" value="X" name="cancel" class="cancel">
 	<table id="id_listcontainer3">
 		<thead>
 		<tr>
@@ -23,7 +23,9 @@
 		</tbody>
 	</table>
 		<br>
-		<input type="button" value="submit" name="submit" class="submit">
+		<div id="id_alert_users"></div>
+		<input type="button" value="submit" name="submit" class="submit" style="width: 145px">
+		<input type="button" value="clear" name="clear" class="clear" style="width: 145px">
 	</form>
 </div>
      <div class="logout">
@@ -38,7 +40,7 @@
 				 Date: <input type="date" name="date" required /><br>
 				 Time: <input type="time" name="time" required /><br>
 				 Duration: <input type="time" name="duration" required /><br>
-				 Guests: <input type="number" name="guests" min=0 required /><br>
+				 Guests: <input type="number" name="guests" min=0 required /><br><br>
 				 <input type="button" value="submit" name="submit" class="submit">
 			 </fieldset>
 		 </form>
@@ -50,7 +52,7 @@
 		 <div id="id_alert"></div>
 		 <br><br>
 		 <div id="id_text"></div><br>
-		 <table id="id_listcontainer">
+		 <table id="id_listcontainer" class="conferencestable">
 			 <thead>
 			 <tr>
 				 <th>Title</th>
@@ -64,7 +66,7 @@
 		 </table>
 		 <br><br>
 		 <div id="id_text2"></div><br>
-		 <table id="id_listcontainer2">
+		 <table id="id_listcontainer2" class="conferencestable">
 			 <thead>
 			 <tr>
 				 <th>Title</th>
