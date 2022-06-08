@@ -86,61 +86,21 @@ public class CheckBoxUsers extends HttpServlet {
 				throw new RuntimeException(e);
 			}
 
-			// Redirect to the Home page
-			attempt = 0;
 			request.getSession().removeAttribute("conference");
 
-			response.setStatus(HttpServletResponse.SC_CREATED);
+			response.setStatus(HttpServletResponse.SC_OK);
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().write("success");
 
 		} else {
 
-			if(attempt >= 2){
-				// Redirect to Cancellazione
-				attempt = 0;
-				request.getSession().removeAttribute("conference");
+			request.getSession().removeAttribute("conference");
 
-				response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
-				response.setContentType("application/json");
-				response.setCharacterEncoding("UTF-8");
-				response.getWriter().write("error");
-			} else {
-
-				ArrayList<UserBean> users;
-				UserDAO userDAO = new UserDAO(connection);
-				UserBean user = (UserBean) session.getAttribute("user");
-				try {
-					users = userDAO.getUsers(user.getId());
-					if (users == null) {
-						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-						response.getWriter().println("Resource not found");
-						return;
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					response.getWriter().println("Not possible to recover users");
-					return;
-				}
-
-				for(int i=0; i<checkBoxArray.length; i++)
-					for(UserBean ub: users)
-						if(Integer.parseInt(checkBoxArray[i]) == ub.getId())
-							ub.setChecked(true);
-
-				// Redirect to the Anagrafica page and add users to the parameters
-				attempt++;
-
-				Gson gson = new GsonBuilder().create();
-				String json = gson.toJson(users);
-
-				response.setStatus(HttpServletResponse.SC_OK);
-				response.setContentType("application/json");
-				response.setCharacterEncoding("UTF-8");
-				response.getWriter().write(json);
-			}
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write("error");
 		}
 	}
 

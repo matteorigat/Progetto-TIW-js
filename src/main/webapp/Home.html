@@ -8,26 +8,6 @@
 	<script src="home.js" charset="utf-8" defer></script>
 </head>
 <body>
-<div class="modalbackground" id="modalbackground">
-	<form class="modalform" id="id_usersform" action="#">
-		<input type="button" value="X" name="cancel" class="cancel">
-	<table id="id_listcontainer3">
-		<thead>
-		<tr>
-			<th>Select</th>
-			<th>Name</th>
-			<th>Surname</th>
-		</tr>
-		</thead>
-		<tbody id="id_listcontainerbody3">
-		</tbody>
-	</table>
-		<br>
-		<div id="id_alert_users"></div>
-		<input type="button" value="submit" name="submit" class="submit" style="width: 145px">
-		<input type="button" value="clear" name="clear" class="clear" style="width: 145px">
-	</form>
-</div>
      <div class="logout">
 	<a href="Logout"><button>Logout</button></a>
      </div>
@@ -35,12 +15,12 @@
 	 <div class="conferenceForm">
 		 <p>Complete the form to create a conference</p>
 		 <form id="id_createconferenceform" action="#">
-			 Title: <input type="text" name="title" required /><br>
-			 Date: <input type="date" name="date" required /><br>
-			 Time: <input type="time" name="time" required /><br>
-			 Duration: <input type="time" name="duration" required /><br>
+			 Title: <input type="text" name="title" required /><br><br>
+			 Date: <input type="date" name="date" required /><br><br>
+			 Time: <input type="time" name="time" required /><br><br>
+			 Duration: <input type="time" name="duration" required /><br><br>
 			 Guests: <input type="number" name="guests" min=0 required /><br><br>
-			 <input type="button" value="submit" name="submit" class="submit">
+			 <input type="button" value="submit" name="submit" class="submit" style="width: 145px">
 		 </form>
 	 </div>
 
@@ -49,7 +29,7 @@
 		 <h2 id="id_username"></h2>
 		 <div id="id_alert"></div>
 		 <br><br>
-		 <div id="id_text"></div><br>
+		 <p>Conferences created by you</p>
 		 <table id="id_listcontainer" class="conferencestable">
 			 <thead>
 			 <tr>
@@ -63,7 +43,7 @@
 			 </tbody>
 		 </table>
 		 <br><br>
-		 <div id="id_text2"></div><br>
+		 <p>Conferences where you are invited in</p>
 		 <table id="id_listcontainer2" class="conferencestable">
 			 <thead>
 			 <tr>
@@ -76,6 +56,28 @@
 			 <tbody id="id_listcontainerbody2">
 			 </tbody>
 		 </table>
+	 </div>
+
+	 <div class="modalbackground" id="modalbackground">
+		 <form class="modalform" id="id_usersform" action="#">
+			 <input type="button" value="X" name="cancel" class="cancel">
+			 <table id="id_listcontainer3">
+				 <thead>
+				 <tr>
+					 <th>Select</th>
+					 <th>Name</th>
+					 <th>Surname</th>
+				 </tr>
+				 </thead>
+				 <tbody id="id_listcontainerbody3">
+				 </tbody>
+			 </table>
+			 <br>
+			 <div id="id_alert_users"></div>
+			 <div id="id_alert_attempts"></div>
+			 <input type="button" value="submit" name="submit" class="submit" style="width: 145px">
+			 <input type="button" value="clear" name="clear" class="clear" style="width: 145px">
+		 </form>
 	 </div>
 
 </body>

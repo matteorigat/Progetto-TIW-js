@@ -78,7 +78,11 @@
 				cell.textContent = conference.date;
 				row.appendChild(cell);
 				cell = document.createElement("td");
-				cell.textContent = conference.duration;
+				const [time, modifier] = conference.duration.split(' ');
+				let [hours, minutes] = time.split(':');
+				if (hours === '12') {hours = '00';}
+				if (modifier === 'PM') {hours = parseInt(hours, 10) + 12;}
+				cell.textContent = hours + ":" + minutes;
 				row.appendChild(cell);
 				cell = document.createElement("td");
 				cell.textContent = conference.guests;
@@ -140,7 +144,11 @@
 				cell.textContent = conference.date;
 				row.appendChild(cell);
 				cell = document.createElement("td");
-				cell.textContent = conference.duration;
+				const [time, modifier] = conference.duration.split(' ');
+				let [hours, minutes] = time.split(':');
+				if (hours === '12') {hours = '00';}
+				if (modifier === 'PM') {hours = parseInt(hours, 10) + 12;}
+				cell.textContent = hours + ":" + minutes;
 				row.appendChild(cell);
 				cell = document.createElement("td");
 				cell.textContent = conference.guests;
@@ -245,11 +253,12 @@
 		};
 	}
 
-	function WizardUsers(wizardId, alert, alert_users) {
+	function WizardUsers(wizardId, alert, alert_users, alert_attempts) {
 
 		this.wizard = wizardId;
 		this.alert = alert;
 		this.alert_users = alert_users;
+		this.alert_attempts = alert_attempts;
 
 
 		this.registerEvents = function(orchestrator) {
@@ -270,25 +279,15 @@
 						function(req) {
 							if (req.readyState === XMLHttpRequest.DONE) {
 								let message = req.responseText;
-								if (req.status === 201) { //created
+								if (req.status === 200) { //created
 									self.alert.textContent = "Conference created!";
-									orchestrator.refresh();
-								} else if (req.status === 200) { // riprova
-									usersToShow = JSON.parse(req.responseText);
-									if (usersToShow.length === 0) {
-										self.alert.textContent = "No users to show!";
-									}
-									orchestrator.refresh("modalWindow");
-								} else if (req.status === 205) { // troppi tentativi
-									self.alert.textContent = "Three attempts to define a conference with too many participants, the conference will not be created";
 									orchestrator.refresh();
 								} else if (req.status === 403) {
 									window.location.href = req.getResponseHeader("Location");
 									window.sessionStorage.removeItem('username');
-								}
-								else {  //error
+								} else {  //error
 									self.alert.textContent = "ERROR: " + message;
-									self.reset();
+									orchestrator.refresh();
 								}
 							}
 						}
@@ -299,7 +298,8 @@
 					} else if(attempt<2){
 						usersToShow = newusers;
 						attempt++;
-						this.alert_users.textContent = "Too many partecitants, delete at least " + (valid-numGuests) + "You still have " + (3-attempt) + " attempts";
+						this.alert_users.textContent = "Too many partecitants, delete at least " + (valid-numGuests);
+						this.alert_attempts.textContent = "You still have " + (3-attempt) + " attempts";
 					} else {
 						this.alert.textContent = "Three attempts to define a conference with too many participants, the conference will not be created";
 						attempt = 0;
@@ -310,6 +310,8 @@
 
 			// Manage cancel button
 			this.wizard.querySelector("input[type='button'].cancel").addEventListener('click', () => {
+				this.alert_users.textContent = "";
+				this.alert_attempts.textContent = "";
 				orchestrator.refresh();
 			});
 
@@ -319,6 +321,7 @@
 				for (let i = 0; i < eventform.elements.length; i++) {
 					eventform.elements[i].checked = false;
 				}
+				this.alert_users.textContent = "";
 			});
 		};
 	}
@@ -326,6 +329,7 @@
 	function PageOrchestrator() {
 		let alertContainer = document.getElementById("id_alert");
 		let alertContainer_users = document.getElementById("id_alert_users");
+		let alertContainer_attempts = document.getElementById("id_alert_attempts");
 
 		this.start = function() {
 			personalMessage = new PersonalMessage(sessionStorage.getItem('username'),
@@ -352,7 +356,7 @@
 			wizard = new Wizard(document.getElementById("id_createconferenceform"), alertContainer);
 			wizard.registerEvents(this);  // the orchestrator passes itself --this-- so that the wizard can call its refresh function after creating a conference
 
-			wizardUsers = new WizardUsers(document.getElementById("id_usersform"), alertContainer, alertContainer_users);
+			wizardUsers = new WizardUsers(document.getElementById("id_usersform"), alertContainer, alertContainer_users, alertContainer_attempts);
 			wizardUsers.registerEvents(this);
 
 

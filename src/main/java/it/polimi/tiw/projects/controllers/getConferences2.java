@@ -53,7 +53,7 @@ public class getConferences2 extends HttpServlet {
 		}
 
 		Gson gson = new GsonBuilder()
-				.setDateFormat("yyyy MMM dd HH:mm:ss").create();
+				.setDateFormat("dd MMM yyyy - HH:mm").create();
 		String json = gson.toJson(conferences2);
 
 
