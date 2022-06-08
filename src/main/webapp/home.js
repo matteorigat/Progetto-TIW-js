@@ -1,9 +1,9 @@
 { // avoid variables ending up in the global scope
 
 	// page components
-	let conferencesList, conferencesList2, usersList, wizard, wizardUsers, conference, attempt,
+	let conferencesList, conferencesList2, usersList, wizard, wizardUsers,
 		pageOrchestrator = new PageOrchestrator(); // main controller
-	let usersToShow;
+	let usersToShow, numGuests, attempt;
 
 	window.addEventListener("load", () => {
 		if (sessionStorage.getItem("username") == null) {
@@ -214,7 +214,7 @@
 					}
 				}
 
-				conference = form;
+				numGuests = form.elements[4].value;
 				attempt = 0;
 
 				if (valid) {
@@ -264,7 +264,7 @@
 					}
 				}
 
-				if (valid > 0 && valid <= conference.guests.value) {
+				if (valid > 0 && valid<numGuests){
 					let self = this;
 					makeCall("POST", 'CheckBoxUsers', e.target.closest("form"),
 						function(req) {
@@ -294,25 +294,26 @@
 						}
 					);
 				} else {
-					if(attempt<2){
+					if (valid === 0){
+						this.alert_users.textContent = "Select at least one partecipant";
+					} else if(attempt<2){
 						usersToShow = newusers;
 						attempt++;
-						self.alert_users.textContent = "Too many partecitants, delete at least";
-						orchestrator.refresh("modalWindow");
+						this.alert_users.textContent = "Too many partecitants, delete at least " + (valid-numGuests) + "You still have " + (3-attempt) + " attempts";
 					} else {
-						self.alert.textContent = "Three attempts to define a conference with too many participants, the conference will not be created";
+						this.alert.textContent = "Three attempts to define a conference with too many participants, the conference will not be created";
 						attempt = 0;
 						orchestrator.refresh();
 					}
 				}
 			});
 
-			// Manage submit button
-			this.wizard.querySelector("input[type='button'].cancel").addEventListener('click', (e) => {
+			// Manage cancel button
+			this.wizard.querySelector("input[type='button'].cancel").addEventListener('click', () => {
 				orchestrator.refresh();
 			});
 
-			// Manage submit button
+			// Manage clear button
 			this.wizard.querySelector("input[type='button'].clear").addEventListener('click', (e) => {
 				let eventform = e.target.closest("form");
 				for (let i = 0; i < eventform.elements.length; i++) {
