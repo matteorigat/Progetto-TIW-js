@@ -6,9 +6,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -41,7 +39,7 @@ public class CreateConference extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws  IOException {
 		// If the user is not logged in (not present in session) redirect to the login
 		HttpSession session = request.getSession();
 		if (session.isNew() || session.getAttribute("user") == null) {

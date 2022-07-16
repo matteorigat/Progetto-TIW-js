@@ -33,7 +33,7 @@ public class CheckLogin extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws IOException {
 		// obtain and escape params
 		String usrn;
 		String pwd;

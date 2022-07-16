@@ -3,9 +3,7 @@ package it.polimi.tiw.projects.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -14,14 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import it.polimi.tiw.projects.beans.Conference;
 import it.polimi.tiw.projects.dao.ConferenceDAO;
 import it.polimi.tiw.projects.dao.GuestDAO;
-import it.polimi.tiw.projects.dao.UserDAO;
-
-import it.polimi.tiw.projects.beans.UserBean;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
 
 @WebServlet("/CheckBoxUsers")
@@ -29,8 +22,6 @@ import it.polimi.tiw.projects.utils.ConnectionHandler;
 public class CheckBoxUsers extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-
-	private int attempt = 0;
 
 	public CheckBoxUsers() {
 		super();
@@ -41,7 +32,7 @@ public class CheckBoxUsers extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws IOException {
 
 		// If the user is not logged in (not present in session) redirect to the login
 		HttpSession session = request.getSession();
