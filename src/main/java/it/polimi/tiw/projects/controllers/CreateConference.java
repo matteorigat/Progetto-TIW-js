@@ -82,7 +82,7 @@ public class CreateConference extends HttpServlet {
 		conference.setDate(date);
 		conference.setDuration(duration);
 		conference.setGuests(guests);
-		request.getSession().setAttribute("conference", conference);
+		session.setAttribute("conference", conference);
 
 
 		ArrayList<UserBean> users;

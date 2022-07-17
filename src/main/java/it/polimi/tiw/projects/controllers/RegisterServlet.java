@@ -92,7 +92,6 @@ public class RegisterServlet extends HttpServlet {
         String userRegistered = userDao.registerUser(userBean);
 
         if(userRegistered.equals("SUCCESS")){
-            request.getSession().setAttribute("user", userBean);
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

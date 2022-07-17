@@ -42,7 +42,7 @@ public class CheckBoxUsers extends HttpServlet {
 			return;
 		}
 
-		Conference conference = (Conference) request.getSession().getAttribute("conference");
+		Conference conference = (Conference) session.getAttribute("conference");
 		if (conference == null) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			response.getWriter().println("Not possible to recover conference");
