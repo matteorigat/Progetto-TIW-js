@@ -273,7 +273,7 @@
 					}
 				}
 
-				if (valid > 0 && valid<numGuests){
+				if (valid > 0 && valid<=numGuests){
 					let self = this;
 					makeCall("POST", 'CheckBoxUsers', e.target.closest("form"),
 						function(req) {
